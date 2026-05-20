@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PathFlow AI — Career Guidance Platform</title>
+
+    <!-- Bootstrap 5 CSS — internet se load hoga -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Fonts — professional typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Hamari Custom CSS -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNavbar">
+        <div class="container">
+
+            <!-- Logo -->
+            <a class="navbar-brand fw-bold fs-4" href="/">
+    <img src="{{ url_for('static', filename='images/logo1.png') }}"
+    style="height: 50px; width: 50px; margin-left: auto; vertical-align: middle;">
+    <strong style="font-weight: 1500; margin-right: 8px;">PathFlow.in</strong>
+</a>
+            <!-- Mobile Menu Button -->
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Nav Links -->
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav ms-auto align-items-center gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#how-it-works">How It Works</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-nav px-3 py-2 rounded-pill" href="/register">
+                            <i class="fas fa-user-plus me-1"></i>Register
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========== HERO SECTION ========== -->
+    <section class="hero-section d-flex align-items-center" id="home">
+        <div class="container">
+            <div class="row align-items-center">
+
+                <!-- Left Side — Text -->
+                <div class="col-lg-6 hero-text">
+                    <div class="badge-pill mb-4">
+                        <i class="fas fa-sparkles me-2"></i>AI Powered Career Platform
+                    </div>
+                    <h1 class="hero-title">
+                        Plan Your Career <br>
+                        <span class="gradient-text">With AI Guidance</span>
+                    </h1>
+                    <p class="hero-subtitle mt-3">
+                        PathFlow AI analyzes your goals, detects skill gaps, and generates 
+                        a personalized learning roadmap — Powered by PathFlow.in
+                    </p>
+                    <div class="d-flex gap-3 mt-4 flex-wrap">
+                        <a href="#get-started" class="btn btn-primary-custom btn-lg">
+                            <i class="fas fa-rocket me-2"></i>Start Free
+                        </a>
+                        <a href="#features" class="btn btn-outline-custom btn-lg">
+                            <i class="fas fa-play-circle me-2"></i>See Features
+                        </a>
+                    </div>
+
+                    <!-- Stats Row -->
+                    <div class="stats-row mt-5 d-flex gap-4 flex-wrap">
+                        <div class="stat-item">
+                            <h3 class="stat-number">10K+</h3>
+                            <p class="stat-label">Students Guided</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3 class="stat-number">50+</h3>
+                            <p class="stat-label">Career Paths</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3 class="stat-number">95%</h3>
+                            <p class="stat-label">Success Rate</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side — Card -->
+                <div class="col-lg-6 mt-5 mt-lg-0">
+                    <div class="hero-card">
+                        <div class="card-header-custom">
+                            <i class="fas fa-robot me-2"></i>AI Career Analyzer
+                        </div>
+                        <div class="card-body-custom">
+                            <p class="card-label">What do you want to become?</p>
+                            <div class="input-group-custom">
+                                <i class="fas fa-briefcase"></i>
+                                <input type="text" placeholder="e.g. Data Analyst, Web Developer..." id="heroInput">
+                            </div>
+                            <button class="btn-analyze" onclick="analyzeCareer()">
+                                <i class="fas fa-magic me-2"></i>Generate My Roadmap
+                            </button>
+                            <div class="suggestions mt-3">
+                                <span class="suggest-tag" onclick="fillInput(this)">Data Analyst</span>
+                                <span class="suggest-tag" onclick="fillInput(this)">Web Developer</span>
+                                <span class="suggest-tag" onclick="fillInput(this)">AI Engineer</span>
+                                <span class="suggest-tag" onclick="fillInput(this)">Python Dev</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FEATURES SECTION ========== -->
+    <!-- ========== FEATURES SECTION ========== -->
+<section class="features-section py-5" id="features">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title">Everything You Need</h2>
+            <p class="section-subtitle">AI-powered tools to accelerate your career growth</p>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- Feature 1 — Career Roadmap -->
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <h4 class="feature-title">Career Roadmap</h4>
+                    <p class="feature-desc">Get a personalized step-by-step roadmap based on your dream career goal.</p>
+                    <a href="#home" class="feature-btn mt-3">
+                        <i class="fas fa-arrow-right me-2"></i>Try Now
+                    </a>
+                </div>
+            </div>
+
+            <!-- Feature 2 — Resume Scanner -->
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h4 class="feature-title">Resume Scanner</h4>
+                    <p class="feature-desc">Upload your skills and get instant feedback on what's missing for your target role.</p>
+                    <a href="/resume-scanner" class="feature-btn mt-3">
+                        <i class="fas fa-arrow-right me-2"></i>Scan My Skills
+                    </a>
+                </div>
+            </div>
+
+            <!-- Feature 3 — Interview Prep -->
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h4 class="feature-title">Interview Prep</h4>
+                    <p class="feature-desc">Practice with AI-generated interview questions tailored to your role.</p>
+                    <a href="/interview" class="feature-btn mt-3">
+                        <i class="fas fa-arrow-right me-2"></i>Practice Now
+                    </a>
+                </div>
+            </div>
+
+            <!-- Feature 4 — Project Ideas -->
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <h4 class="feature-title">Project Ideas</h4>
+                    <p class="feature-desc">Get resume-worthy project suggestions matched to your skill level.</p>
+                    <a href="/projects" class="feature-btn mt-3">
+                        <i class="fas fa-arrow-right me-2"></i>Get Ideas
+                    </a>
+                </div>
+            </div>
+
+            <!-- Feature 5 — Salary Insights -->
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-rupee-sign"></i>
+                    </div>
+                    <h4 class="feature-title">Salary Insights</h4>
+                    <p class="feature-desc">Know the salary range for your target role in India and globally.</p>
+                    <a href="/salary" class="feature-btn mt-3">
+                        <i class="fas fa-arrow-right me-2"></i>Check Salary
+                    </a>
+                </div>
+            </div>
+
+            <!-- Feature 6 — Dashboard -->
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h4 class="feature-title">Progress Dashboard</h4>
+                    <p class="feature-desc">Track your learning journey and saved roadmaps in one place.</p>
+                    <a href="/dashboard" class="feature-btn mt-3">
+                        <i class="fas fa-arrow-right me-2"></i>My Dashboard
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+    <!-- ========== HOW IT WORKS ========== -->
+    <section class="how-section py-5" id="how-it-works">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">How It Works</h2>
+                <p class="section-subtitle">3 simple steps to your dream career</p>
+            </div>
+            <div class="row g-4 justify-content-center">
+
+                <div class="col-md-4">
+                    <div class="step-card text-center">
+                        <div class="step-number">1</div>
+                        <h4 class="mt-3">Enter Your Goal</h4>
+                        <p>Tell us what career you want — Data Analyst, Developer, AI Engineer, anything!</p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="step-card text-center">
+                        <div class="step-number">2</div>
+                        <h4 class="mt-3">AI Analyzes</h4>
+                        <p>AI detects your skill gaps and builds a custom roadmap just for you.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="step-card text-center">
+                        <div class="step-number">3</div>
+                        <h4 class="mt-3">Start Learning</h4>
+                        <p>Follow your roadmap, practice interviews, and land your dream job!</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer py-4">
+        <div class="container text-center">
+            <p class="mb-0">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" 
+     style="height: 30px; width: auto; margin-right: auto; vertical-align: middle;">
+<strong>PathFlow AI</strong> — Find Your Path, Flow Toward Success<i class="fas fa-rocket ms-2" style="color: #00bfff;"></i>
+            </p>
+            <p class="mt-2 footer-sub">pathflow.in | developed by preet singh</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Hamara Custom JS -->
+    <script>
+        // Navbar scroll effect
+window.addEventListener('scroll', function() {
+    const navbar = document.getElementById('mainNavbar');
+    if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+    } else {
+        navbar.classList.remove('scrolled');
+    }
+});
+
+// Suggestion tags
+function fillInput(el) {
+    document.getElementById('heroInput').value = el.textContent;
+}
+
+// Main analyze function
+async function analyzeCareer() {
+    const career = document.getElementById('heroInput').value.trim();
+
+    if (!career) {
+        alert('Pehle apna career goal likho!');
+        return;
+    }
+
+    // Button loading state
+    const btn = document.querySelector('.btn-analyze');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>AI Generating...';
+    btn.disabled = true;
+
+    try {
+        const response = await fetch('/generate-roadmap', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ career: career })
+        });
+
+        const data = await response.json();
+
+        if (data.roadmap) {
+            showRoadmap(career, data.roadmap);
+        } else {
+            alert('Error: ' + data.error);
+        }
+    } catch (err) {
+        alert('Server se connect nahi ho pa raha!');
+    } finally {
+        btn.innerHTML = '<i class="fas fa-magic me-2"></i>Generate My Roadmap';
+        btn.disabled = false;
+    }
+}
+
+// Roadmap display karo
+function showRoadmap(career, roadmap) {
+    // Stats update karo
+    let count = parseInt(localStorage.getItem('roadmapCount') || '0');
+    localStorage.setItem('roadmapCount', count + 1);
+    
+    // Agar pehle se modal hai toh remove karo
+    const existing = document.getElementById('roadmapModal');
+    // Format text
+    const formatted = roadmap
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/^(.*?:)$/gm, '<span class="section-head">$1</span>')
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        .replace(/\n/g, '<br>');
+
+    // Modal banao
+    const modal = document.createElement('div');
+    modal.id = 'roadmapModal';
+    modal.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.85); z-index: 9999;
+        display: flex; align-items: center; justify-content: center;
+        padding: 20px; backdrop-filter: blur(10px);
+    `;
+
+    modal.innerHTML = `
+        <div style="
+            background: #12122a; border: 1px solid rgba(102,126,234,0.3);
+            border-radius: 24px; max-width: 750px; width: 100%;
+            max-height: 85vh; overflow-y: auto; padding: 32px;
+        ">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                <h3 style="background: linear-gradient(135deg, #667eea, #a78bfa);
+                    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+                    font-size: 1.4rem; font-weight: 800; margin:0;">
+                    Career Roadmap: ${career}
+                </h3>
+                <button onclick="document.getElementById('roadmapModal').remove()"
+                    style="background: rgba(255,255,255,0.1); border: none; color: white;
+                    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+                    font-size: 1.1rem;">✕</button>
+            </div>
+            <div style="color: rgba(255,255,255,0.85); line-height: 1.9; font-size: 0.95rem;">
+                <style>
+                    .section-head { color: #a78bfa; font-weight: 700;
+                        display: block; margin-top: 16px; font-size: 1rem; }
+                    #roadmapModal li { margin: 4px 0; }
+                </style>
+                ${formatted}
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Click outside to close
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) modal.remove();
+    });
+}
+    </script>
+
+</body>
+</html>

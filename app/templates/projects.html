@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Ideas — PathFlow AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <style>
+        .projects-hero {
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a1628 100%);
+            min-height: 100vh;
+            padding-top: 100px;
+        }
+        .projects-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+        }
+        .role-input {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: white;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+        }
+        .role-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .role-input::placeholder { color: rgba(255,255,255,0.3); }
+        .section-label {
+            color: #a78bfa;
+            font-weight: 700;
+            font-size: 1rem;
+            margin: 16px 0 8px;
+            display: block;
+        }
+        .suggest-tag {
+            display: inline-block;
+            background: rgba(102,126,234,0.15);
+            border: 1px solid rgba(102,126,234,0.3);
+            color: #a78bfa;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin: 3px;
+            transition: all 0.2s;
+        }
+        .suggest-tag:hover {
+            background: rgba(102,126,234,0.3);
+            transform: translateY(-1px);
+        }
+        .level-btn {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.7);
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            margin: 4px;
+        }
+        .level-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-color: transparent;
+            color: white;
+        }
+        .result-box {
+            margin-top: 24px;
+            display: none;
+        }
+        .project-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+        }
+        .project-card:hover {
+            border-color: rgba(102,126,234,0.4);
+            background: rgba(102,126,234,0.06);
+            transform: translateY(-3px);
+        }
+        .project-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+        }
+        .project-desc {
+            color: rgba(255,255,255,0.65);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        .project-meta {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .meta-tag {
+            background: rgba(102,126,234,0.15);
+            border: 1px solid rgba(102,126,234,0.3);
+            color: #a78bfa;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+        .time-tag {
+            background: rgba(46,213,115,0.15);
+            border: 1px solid rgba(46,213,115,0.3);
+            color: #2ed573;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+        .difficulty-badge {
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .beginner { background: rgba(46,213,115,0.2); color: #2ed573; border: 1px solid rgba(46,213,115,0.4); }
+        .intermediate { background: rgba(255,193,7,0.2); color: #ffc107; border: 1px solid rgba(255,193,7,0.4); }
+        .advanced { background: rgba(231,76,60,0.2); color: #e74c3c; border: 1px solid rgba(231,76,60,0.4); }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 28px 0 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNavbar">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4" href="/">
+    <img src="{{ url_for('static', filename='images/logo1.png') }}"
+    style="height: 50px; width: 50px; margin-left: auto; vertical-align: middle;">
+    <strong style="font-weight: 1500; margin-right: 8px;">PathFlow.in</strong>
+</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto gap-2">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/resume-scanner">Resume Scanner</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/interview">Interview Prep</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="projects-hero">
+        <div class="container">
+
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <div class="badge-pill mb-3">
+                    <i class="fas fa-project-diagram me-2"></i>AI Project Ideas
+                </div>
+                <h1 class="hero-title">Project <span class="gradient-text">Generator</span></h1>
+                <p class="hero-subtitle mx-auto mt-3">
+                    Apna role batao — AI tumhare liye resume-worthy projects suggest karega!
+                </p>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="projects-card">
+
+                        <!-- Role Input -->
+                        <div class="mb-4">
+                            <label class="section-label">
+                                <i class="fas fa-briefcase me-2"></i>Tumhara Target Role
+                            </label>
+                            <input type="text" class="role-input" id="roleInput"
+                                placeholder="e.g. Python Developer, Data Analyst, Web Developer...">
+                            <div class="mt-2">
+                                <span class="suggest-tag" onclick="fillRole('Web Developer')">Web Developer</span>
+                                <span class="suggest-tag" onclick="fillRole('Python Developer')">Python Developer</span>
+                                <span class="suggest-tag" onclick="fillRole('Data Analyst')">Data Analyst</span>
+                                <span class="suggest-tag" onclick="fillRole('AI Engineer')">AI Engineer</span>
+                                <span class="suggest-tag" onclick="fillRole('Full Stack Developer')">Full Stack Developer</span>
+                                <span class="suggest-tag" onclick="fillRole('Android Developer')">Android Developer</span>
+                            </div>
+                        </div>
+
+                        <!-- Generate Button -->
+                        <button class="btn-analyze" id="generateBtn" onclick="generateProjects()">
+                            <i class="fas fa-magic me-2"></i>Generate Project Ideas
+                        </button>
+
+                        <!-- Results -->
+                        <div class="result-box" id="resultBox">
+                            <div id="projectsContent"></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function fillRole(role) {
+            document.getElementById('roleInput').value = role;
+        }
+
+        async function generateProjects() {
+            const role = document.getElementById('roleInput').value.trim();
+
+            if (!role) {
+                alert('Pehle role likho!');
+                return;
+            }
+
+            const btn = document.getElementById('generateBtn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>AI Generating...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/generate-projects', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ role, level: 'all' })
+                });
+
+                const data = await response.json();
+
+                if (data.projects) {
+                    showProjects(data.projects);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (err) {
+                alert('Server error!');
+            } finally {
+                btn.innerHTML = '<i class="fas fa-magic me-2"></i>Generate Project Ideas';
+                btn.disabled = false;
+            }
+        }
+
+        function showProjects(raw) {
+    const lines = raw.split('\n');
+    let html = '';
+    let currentLevel = '';
+    let currentProject = null;
+
+    function flushProject() {
+        if (!currentProject || !currentProject.name) return;
+        html += buildProjectCard(currentProject, currentLevel);
+        currentProject = null;
+    }
+
+    lines.forEach(line => {
+        line = line.trim();
+        if (!line) return;
+
+        // Remove markdown bold
+        line = line.replace(/\*\*(.*?)\*\*/g, '$1');
+
+        // Level headers
+        if (line.match(/BEGINNER PROJECTS/i)) {
+            flushProject();
+            currentLevel = 'beginner';
+            html += `<div class="section-header">
+                <span class="difficulty-badge beginner">Beginner</span>
+                <span style="color:rgba(255,255,255,0.5); font-size:0.85rem;">Start here — build confidence</span>
+            </div>`;
+            return;
+        }
+        if (line.match(/INTERMEDIATE PROJECTS/i)) {
+            flushProject();
+            currentLevel = 'intermediate';
+            html += `<div class="section-header">
+                <span class="difficulty-badge intermediate">Intermediate</span>
+                <span style="color:rgba(255,255,255,0.5); font-size:0.85rem;">Level up your portfolio</span>
+            </div>`;
+            return;
+        }
+        if (line.match(/ADVANCED PROJECTS/i)) {
+            flushProject();
+            currentLevel = 'advanced';
+            html += `<div class="section-header">
+                <span class="difficulty-badge advanced">Advanced</span>
+                <span style="color:rgba(255,255,255,0.5); font-size:0.85rem;">Stand out in interviews</span>
+            </div>`;
+            return;
+        }
+        if (line.match(/RESUME TIPS/i)) {
+            flushProject();
+            currentLevel = 'tips';
+            html += `<div class="section-header">
+                <span style="color:#ffc107; font-weight:700;">
+                    <i class="fas fa-lightbulb me-2"></i>Resume Tips
+                </span>
+            </div><div class="project-card"><ul style="color:rgba(255,255,255,0.8); padding-left:20px; margin:0;">`;
+            return;
+        }
+
+        // Tips list
+        if (currentLevel === 'tips') {
+            const tip = line.replace(/^[-*•]\s*/, '').trim();
+            if (tip) html += `<li style="margin:8px 0;">${tip}</li>`;
+            return;
+        }
+
+        // Project name — "Project 1:" or "1." or numbered
+        if (line.match(/^Project\s*\d+\s*[:\-]/i)) {
+            flushProject();
+            currentProject = {
+                name: line.replace(/^Project\s*\d+\s*[:\-]\s*/i, '').trim(),
+                desc: '', skills: '', time: ''
+            };
+            return;
+        }
+
+        // Also catch "1. ProjectName" format
+        if (line.match(/^\d+[\.\)]\s+\w/) && currentLevel && currentLevel !== 'tips') {
+            flushProject();
+            currentProject = {
+                name: line.replace(/^\d+[\.\)]\s+/, '').trim(),
+                desc: '', skills: '', time: ''
+            };
+            return;
+        }
+
+        if (!currentProject) return;
+
+        // Description
+        if (line.match(/^Description\s*[:\-]/i)) {
+            currentProject.desc = line.replace(/^Description\s*[:\-]\s*/i, '').trim();
+            return;
+        }
+        // Skills
+        if (line.match(/^Skills?\s*(Used)?\s*[:\-]/i)) {
+            currentProject.skills = line.replace(/^Skills?\s*(Used)?\s*[:\-]\s*/i, '').trim();
+            return;
+        }
+        // Time
+        if (line.match(/^Time\s*[:\-]/i)) {
+            currentProject.time = line.replace(/^Time\s*[:\-]\s*/i, '').trim();
+            return;
+        }
+
+        // Continuation of description
+        if (currentProject && !currentProject.desc) {
+            currentProject.desc += line;
+        } else if (currentProject && currentProject.desc) {
+            currentProject.desc += ' ' + line;
+        }
+    });
+
+    // Flush last project
+    flushProject();
+
+    // Close tips list
+    if (currentLevel === 'tips') html += '</ul></div>';
+
+    document.getElementById('projectsContent').innerHTML = html;
+    document.getElementById('resultBox').style.display = 'block';
+    document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth' });
+}
+        function buildProjectCard(p, level) {
+            return `
+                <div class="project-card">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div class="project-name">${p.name}</div>
+                        <span class="difficulty-badge ${level}">${level}</span>
+                    </div>
+                    <div class="project-desc">${p.desc}</div>
+                    <div class="project-meta">
+                        ${p.skills ? `<span class="meta-tag"><i class="fas fa-code me-1"></i>${p.skills}</span>` : ''}
+                        ${p.time ? `<span class="time-tag"><i class="fas fa-clock me-1"></i>${p.time}</span>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

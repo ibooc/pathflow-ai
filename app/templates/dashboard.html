@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — PathFlow AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <style>
+        .dashboard-page {
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a1628 100%);
+            min-height: 100vh;
+            padding-top: 100px;
+            padding-bottom: 60px;
+        }
+        .dash-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 28px;
+            height: 100%;
+            transition: all 0.3s;
+        }
+        .dash-card:hover { border-color: rgba(102,126,234,0.4); }
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .stat-card:hover { transform: translateY(-3px); }
+        .stat-icon {
+            width: 50px; height: 50px;
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; margin: 0 auto 12px;
+        }
+        .stat-number {
+            font-size: 2rem; font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stat-label { color: rgba(255,255,255,0.5); font-size: 0.85rem; margin: 0; }
+        .section-title-sm {
+            font-size: 1.1rem; font-weight: 700; color: white;
+            margin-bottom: 16px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .section-title-sm i { color: #667eea; }
+        .tool-btn {
+            display: flex; align-items: center; gap: 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px; padding: 16px 20px;
+            text-decoration: none; color: white;
+            transition: all 0.3s; margin-bottom: 12px;
+        }
+        .tool-btn:hover {
+            border-color: rgba(102,126,234,0.5);
+            background: rgba(102,126,234,0.1);
+            color: white; transform: translateX(4px);
+        }
+        .tool-icon {
+            width: 44px; height: 44px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; flex-shrink: 0;
+        }
+        .tool-info h6 { margin: 0; font-weight: 700; font-size: 0.95rem; }
+        .tool-info p { margin: 0; color: rgba(255,255,255,0.5); font-size: 0.8rem; }
+        .progress-custom {
+            background: rgba(255,255,255,0.08);
+            border-radius: 50px; height: 8px; margin: 8px 0;
+        }
+        .progress-bar-custom {
+            height: 8px; border-radius: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transition: width 1.2s ease;
+        }
+        .skill-row { margin-bottom: 16px; }
+        .skill-name {
+            display: flex; justify-content: space-between;
+            color: rgba(255,255,255,0.8); font-size: 0.85rem; margin-bottom: 4px;
+        }
+        .welcome-banner {
+            background: linear-gradient(135deg, rgba(102,126,234,0.2), rgba(118,75,162,0.2));
+            border: 1px solid rgba(102,126,234,0.3);
+            border-radius: 20px; padding: 28px 32px; margin-bottom: 28px;
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 16px;
+        }
+        .avatar {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; font-weight: 800; flex-shrink: 0;
+        }
+        /* AI Insights */
+        .insights-box {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(102,126,234,0.3);
+            border-radius: 16px; padding: 24px;
+            margin-top: 24px; display: none;
+        }
+        .score-circle {
+            width: 100px; height: 100px; border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            margin: 0 auto 16px;
+        }
+        .score-number { font-size: 1.8rem; font-weight: 800; color: white; line-height: 1; }
+        .score-label { font-size: 0.65rem; color: rgba(255,255,255,0.8); }
+        .insight-section { margin-bottom: 20px; }
+        .insight-title {
+            color: #a78bfa; font-weight: 700; font-size: 0.9rem;
+            margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+        }
+        .insight-item {
+            background: rgba(255,255,255,0.04);
+            border-left: 3px solid #667eea;
+            border-radius: 0 8px 8px 0;
+            padding: 8px 14px; margin-bottom: 6px;
+            color: rgba(255,255,255,0.8); font-size: 0.88rem;
+        }
+        .insight-item.missing { border-left-color: #e74c3c; }
+        .insight-item.strength { border-left-color: #2ed573; }
+        .insight-item.course { border-left-color: #ffc107; }
+        .salary-box {
+            background: rgba(46,213,115,0.1);
+            border: 1px solid rgba(46,213,115,0.3);
+            border-radius: 12px; padding: 16px;
+            margin-bottom: 16px;
+        }
+        .advice-box {
+            background: rgba(102,126,234,0.1);
+            border: 1px solid rgba(102,126,234,0.3);
+            border-radius: 12px; padding: 16px;
+            color: rgba(255,255,255,0.85); font-size: 0.9rem;
+            line-height: 1.7; margin-bottom: 16px;
+        }
+        .time-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 8px 20px; border-radius: 50px;
+            font-weight: 700; font-size: 0.9rem;
+        }
+        .analyze-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none; color: white; padding: 14px;
+            border-radius: 12px; font-weight: 600;
+            cursor: pointer; font-size: 1rem;
+            transition: all 0.3s ease; margin-top: 16px;
+        }
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102,126,234,0.4);
+        }
+        .loading-box {
+            text-align: center; padding: 32px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNavbar">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4" href="/">
+    <img src="{{ url_for('static', filename='images/logo1.png') }}"
+    style="height: 50px; width: 50px; margin-left: auto; vertical-align: middle;">
+    <strong style="font-weight: 1500; margin-right: 8px;">PathFlow.in</strong>
+</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto gap-2">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/resume-scanner">Resume Scanner</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/interview">Interview Prep</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/projects">Projects</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/setup">
+                        <i class="fas fa-edit me-1"></i>Edit Profile
+                    </a></li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-nav px-3 py-2 rounded-pill" href="/logout">
+                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-page">
+        <div class="container">
+
+            <!-- Welcome Banner -->
+            <div class="welcome-banner">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="avatar">{{ user.name[0].upper() }}</div>
+                    <div>
+                        <h4 style="margin:0; font-weight:800;">
+                            Welcome back, {{ user.name }}! 👋
+                        </h4>
+                        <p style="margin:0; color:rgba(255,255,255,0.5); font-size:0.9rem;">
+                            🎯 Target: <strong style="color:#a78bfa;">
+                                {{ user.target_role or 'Setup mein set karo!' }}
+                            </strong>
+                        </p>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <div style="color:#a78bfa; font-size:0.85rem;">Today</div>
+                    <div style="font-weight:700;" id="currentDate"></div>
+                </div>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:rgba(102,126,234,0.2);">
+                            <i class="fas fa-map-marked-alt" style="color:#667eea;"></i>
+                        </div>
+                        <div class="stat-number">{{ user.roadmaps_count }}</div>
+                        <p class="stat-label">Roadmaps Generated</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:rgba(46,213,115,0.2);">
+                            <i class="fas fa-file-alt" style="color:#2ed573;"></i>
+                        </div>
+                        <div class="stat-number">{{ user.scans_count }}</div>
+                        <p class="stat-label">Skills Scanned</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:rgba(255,193,7,0.2);">
+                            <i class="fas fa-comments" style="color:#ffc107;"></i>
+                        </div>
+                        <div class="stat-number">{{ user.interviews_count }}</div>
+                        <p class="stat-label">Interviews Practiced</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:rgba(231,76,60,0.2);">
+                            <i class="fas fa-project-diagram" style="color:#e74c3c;"></i>
+                        </div>
+                        <div class="stat-number">{{ user.projects_count }}</div>
+                        <p class="stat-label">Projects Generated</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Row -->
+            <div class="row g-4">
+
+                <!-- Left — Profile + Skills -->
+                <div class="col-lg-4">
+                    <div class="dash-card">
+                        <div class="section-title-sm">
+                            <i class="fas fa-user"></i> Your Profile
+                        </div>
+
+                        <!-- Skills Progress -->
+                        <div class="skill-row">
+                            <div class="skill-name">
+                                <span>Python</span><span>{{ user.python_level }}%</span>
+                            </div>
+                            <div class="progress-custom">
+                                <div class="progress-bar-custom" style="width:0%"
+                                    data-width="{{ user.python_level }}%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-row">
+                            <div class="skill-name">
+                                <span>Web Development</span><span>{{ user.web_level }}%</span>
+                            </div>
+                            <div class="progress-custom">
+                                <div class="progress-bar-custom" style="width:0%"
+                                    data-width="{{ user.web_level }}%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-row">
+                            <div class="skill-name">
+                                <span>Data Analysis</span><span>{{ user.data_level }}%</span>
+                            </div>
+                            <div class="progress-custom">
+                                <div class="progress-bar-custom" style="width:0%"
+                                    data-width="{{ user.data_level }}%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-row">
+                            <div class="skill-name">
+                                <span>Machine Learning</span><span>{{ user.ml_level }}%</span>
+                            </div>
+                            <div class="progress-custom">
+                                <div class="progress-bar-custom" style="width:0%"
+                                    data-width="{{ user.ml_level }}%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-row">
+                            <div class="skill-name">
+                                <span>SQL & Database</span><span>{{ user.sql_level }}%</span>
+                            </div>
+                            <div class="progress-custom">
+                                <div class="progress-bar-custom" style="width:0%"
+                                    data-width="{{ user.sql_level }}%"></div>
+                            </div>
+                        </div>
+
+                        {% set overall = ((user.python_level + user.web_level + user.data_level + user.ml_level + user.sql_level) / 5) | int %}
+                        <div class="mt-3 p-3" style="background:rgba(102,126,234,0.1); border-radius:12px; text-align:center;">
+                            <div style="font-size:0.85rem; color:rgba(255,255,255,0.5);">Overall Level</div>
+                            <div style="font-size:2rem; font-weight:800; background: linear-gradient(135deg, #667eea, #a78bfa);
+                                -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
+                                {{ overall }}%
+                            </div>
+                        </div>
+
+                        {% if user.skills %}
+                        <div style="margin-top:12px; padding:12px; background:rgba(46,213,115,0.08);
+                            border:1px solid rgba(46,213,115,0.2); border-radius:10px;">
+                            <div style="color:#2ed573; font-size:0.8rem; font-weight:700; margin-bottom:4px;">
+                                <i class="fas fa-code me-1"></i>Skills:
+                            </div>
+                            <div style="color:rgba(255,255,255,0.7); font-size:0.82rem;">{{ user.skills }}</div>
+                        </div>
+                        {% endif %}
+
+                        <!-- AI Analyze Button -->
+                        <button class="analyze-btn" onclick="analyzeProfile()">
+                            <i class="fas fa-brain me-2"></i>AI Se Analyze Karao
+                        </button>
+
+                        <a href="/setup" style="display:block; text-align:center; margin-top:10px;
+                            color:rgba(255,255,255,0.4); font-size:0.82rem; text-decoration:none;">
+                            <i class="fas fa-edit me-1"></i>Update Profile
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Middle + Right — AI Insights -->
+                <div class="col-lg-8">
+                    <div class="dash-card">
+                        <div class="section-title-sm">
+                            <i class="fas fa-brain"></i> AI Career Insights
+                            <span style="font-size:0.75rem; color:rgba(255,255,255,0.4); font-weight:400; margin-left:8px;">
+                                — Tumhare profile se personalized analysis
+                            </span>
+                        </div>
+
+                        <!-- Default State -->
+                        <div id="defaultState" style="text-align:center; padding:48px 24px;">
+                            <div style="font-size:3rem; margin-bottom:16px;">🤖</div>
+                            <h5 style="color:rgba(255,255,255,0.8);">AI Analysis Ready!</h5>
+                            <p style="color:rgba(255,255,255,0.4); font-size:0.9rem;">
+                                Left side mein <strong style="color:#a78bfa;">"AI Se Analyze Karao"</strong> button dabao
+                                — AI tumhara profile analyze karke real insights dega!
+                            </p>
+                            <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:20px;">
+                                <span style="background:rgba(102,126,234,0.15); border:1px solid rgba(102,126,234,0.3);
+                                    color:#a78bfa; padding:6px 16px; border-radius:20px; font-size:0.8rem;">
+                                    ✓ Job Readiness Score
+                                </span>
+                                <span style="background:rgba(102,126,234,0.15); border:1px solid rgba(102,126,234,0.3);
+                                    color:#a78bfa; padding:6px 16px; border-radius:20px; font-size:0.8rem;">
+                                    ✓ Missing Skills
+                                </span>
+                                <span style="background:rgba(102,126,234,0.15); border:1px solid rgba(102,126,234,0.3);
+                                    color:#a78bfa; padding:6px 16px; border-radius:20px; font-size:0.8rem;">
+                                    ✓ Salary Estimate
+                                </span>
+                                <span style="background:rgba(102,126,234,0.15); border:1px solid rgba(102,126,234,0.3);
+                                    color:#a78bfa; padding:6px 16px; border-radius:20px; font-size:0.8rem;">
+                                    ✓ Next Steps
+                                </span>
+                                <span style="background:rgba(102,126,234,0.15); border:1px solid rgba(102,126,234,0.3);
+                                    color:#a78bfa; padding:6px 16px; border-radius:20px; font-size:0.8rem;">
+                                    ✓ Top Courses
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Loading -->
+                        <div class="loading-box" id="loadingBox">
+                            <i class="fas fa-spinner fa-spin" style="font-size:2.5rem; color:#667eea;"></i>
+                            <p style="margin-top:16px; color:rgba(255,255,255,0.5);">
+                                AI tumhara profile analyze kar raha hai...
+                            </p>
+                            <p style="color:rgba(255,255,255,0.3); font-size:0.85rem;">
+                                Thoda wait karo — personalized insights aa rahe hain!
+                            </p>
+                        </div>
+
+                        <!-- Results -->
+                        <div id="insightsBox" style="display:none;">
+
+                            <!-- Score -->
+                            <div class="text-center mb-4">
+                                <div class="score-circle" id="scoreCircle">
+                                    <span class="score-number" id="scoreNum">0</span>
+                                    <span class="score-label">Job Ready</span>
+                                </div>
+                                <h5 style="color:white; margin:0;">Job Readiness Score</h5>
+                                <p style="color:rgba(255,255,255,0.4); font-size:0.85rem;" id="scoreMsg"></p>
+                            </div>
+
+                            <div class="row g-3">
+                                <!-- Strengths -->
+                                <div class="col-md-6">
+                                    <div class="insight-section">
+                                        <div class="insight-title">
+                                            <i class="fas fa-check-circle" style="color:#2ed573;"></i>
+                                            Tumhari Strengths
+                                        </div>
+                                        <div id="strengthsList"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Missing Skills -->
+                                <div class="col-md-6">
+                                    <div class="insight-section">
+                                        <div class="insight-title">
+                                            <i class="fas fa-exclamation-circle" style="color:#e74c3c;"></i>
+                                            Missing Skills
+                                        </div>
+                                        <div id="missingList"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Next Steps -->
+                                <div class="col-12">
+                                    <div class="insight-section">
+                                        <div class="insight-title">
+                                            <i class="fas fa-rocket" style="color:#667eea;"></i>
+                                            Next Steps — Abhi Karo!
+                                        </div>
+                                        <div id="nextStepsList"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Salary -->
+                                <div class="col-md-6">
+                                    <div class="salary-box">
+                                        <div style="color:#2ed573; font-weight:700; margin-bottom:8px;">
+                                            <i class="fas fa-rupee-sign me-1"></i>Salary Estimate
+                                        </div>
+                                        <div id="salaryInfo" style="color:rgba(255,255,255,0.8); font-size:0.88rem; line-height:1.8;"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Time -->
+                                <div class="col-md-6">
+                                    <div style="background:rgba(255,193,7,0.1); border:1px solid rgba(255,193,7,0.3);
+                                        border-radius:12px; padding:16px; height:100%;">
+                                        <div style="color:#ffc107; font-weight:700; margin-bottom:8px;">
+                                            <i class="fas fa-clock me-1"></i>Time to Job Ready
+                                        </div>
+                                        <div id="timeInfo" class="time-badge"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Courses -->
+                                <div class="col-12">
+                                    <div class="insight-section">
+                                        <div class="insight-title">
+                                            <i class="fas fa-graduation-cap" style="color:#ffc107;"></i>
+                                            Recommended Courses
+                                        </div>
+                                        <div id="coursesList"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Advice -->
+                                <div class="col-12">
+                                    <div class="advice-box">
+                                        <div style="color:#a78bfa; font-weight:700; margin-bottom:8px;">
+                                            <i class="fas fa-comment-alt me-1"></i>
+                                            AI Career Advice — Sirf Tumhare Liye:
+                                        </div>
+                                        <div id="adviceText"></div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Refresh Button -->
+                            <button class="analyze-btn" onclick="analyzeProfile()" style="margin-top:8px;">
+                                <i class="fas fa-sync me-2"></i>Re-Analyze Karo
+                            </button>
+
+                        </div>
+                    </div>
+
+                    <!-- Quick Tools -->
+                    <div class="dash-card mt-4">
+                        <div class="section-title-sm">
+                            <i class="fas fa-bolt"></i> Quick Tools
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-6 col-md-3">
+                                <a href="/" class="tool-btn" style="flex-direction:column; text-align:center; padding:20px 12px;">
+                                    <div class="tool-icon" style="background:rgba(102,126,234,0.2); margin:0 auto 8px;">
+                                        <i class="fas fa-map-marked-alt" style="color:#667eea;"></i>
+                                    </div>
+                                    <span style="font-size:0.85rem; font-weight:600;">Career Roadmap</span>
+                                </a>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a href="/resume-scanner" class="tool-btn" style="flex-direction:column; text-align:center; padding:20px 12px;">
+                                    <div class="tool-icon" style="background:rgba(46,213,115,0.2); margin:0 auto 8px;">
+                                        <i class="fas fa-file-alt" style="color:#2ed573;"></i>
+                                    </div>
+                                    <span style="font-size:0.85rem; font-weight:600;">Resume Scanner</span>
+                                </a>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a href="/interview" class="tool-btn" style="flex-direction:column; text-align:center; padding:20px 12px;">
+                                    <div class="tool-icon" style="background:rgba(255,193,7,0.2); margin:0 auto 8px;">
+                                        <i class="fas fa-comments" style="color:#ffc107;"></i>
+                                    </div>
+                                    <span style="font-size:0.85rem; font-weight:600;">Interview Prep</span>
+                                </a>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a href="/projects" class="tool-btn" style="flex-direction:column; text-align:center; padding:20px 12px;">
+                                    <div class="tool-icon" style="background:rgba(231,76,60,0.2); margin:0 auto 8px;">
+                                        <i class="fas fa-project-diagram" style="color:#e74c3c;"></i>
+                                    </div>
+                                    <span style="font-size:0.85rem; font-weight:600;">Project Ideas</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Date
+        document.getElementById('currentDate').textContent =
+            new Date().toLocaleDateString('en-IN', {
+                weekday: 'long', day: 'numeric', month: 'long'
+            });
+
+        // Progress bars
+        setTimeout(() => {
+            document.querySelectorAll('.progress-bar-custom').forEach(bar => {
+                bar.style.width = bar.getAttribute('data-width');
+            });
+        }, 300);
+
+        // Navbar scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('mainNavbar');
+            nav.classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // AI Analyze
+        async function analyzeProfile() {
+            document.getElementById('defaultState').style.display = 'none';
+            document.getElementById('insightsBox').style.display = 'none';
+            document.getElementById('loadingBox').style.display = 'block';
+
+            try {
+                const res = await fetch('/analyze-dashboard', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({})
+                });
+
+                const data = await res.json();
+
+                if (data.insights) {
+                    parseInsights(data.insights);
+                } else {
+                    alert('Error: ' + data.error);
+                    document.getElementById('defaultState').style.display = 'block';
+                }
+            } catch(e) {
+                alert('Server error!');
+                document.getElementById('defaultState').style.display = 'block';
+            } finally {
+                document.getElementById('loadingBox').style.display = 'none';
+            }
+        }
+
+        function parseInsights(raw) {
+            const lines = raw.split('\n');
+
+            let score = 0, strengths = [], missing = [],
+                nextSteps = [], salary = '', time = '',
+                courses = [], advice = '';
+
+            let currentSection = '';
+
+            lines.forEach(line => {
+                line = line.trim();
+                if (!line) return;
+
+                if (line.startsWith('JOB_READINESS_SCORE:')) {
+                    score = parseInt(line.replace('JOB_READINESS_SCORE:', '').trim()) || 0;
+                } else if (line.startsWith('STRENGTHS:')) {
+                    currentSection = 'strengths';
+                } else if (line.startsWith('MISSING_SKILLS:')) {
+                    currentSection = 'missing';
+                } else if (line.startsWith('NEXT_STEPS:')) {
+                    currentSection = 'nextsteps';
+                } else if (line.startsWith('SALARY_ESTIMATE:')) {
+                    currentSection = 'salary';
+                } else if (line.startsWith('TOP_COURSES:')) {
+                    currentSection = 'courses';
+                } else if (line.startsWith('CAREER_ADVICE:')) {
+                    currentSection = 'advice';
+                } else if (line.startsWith('TIME_TO_JOB_READY:')) {
+                    time = line.replace('TIME_TO_JOB_READY:', '').trim();
+                    currentSection = '';
+                } else {
+                    const clean = line.replace(/^[-*]\s*/, '');
+                    if (currentSection === 'strengths') strengths.push(clean);
+                    else if (currentSection === 'missing') missing.push(clean);
+                    else if (currentSection === 'nextsteps') nextSteps.push(clean);
+                    else if (currentSection === 'salary') salary += clean + '<br>';
+                    else if (currentSection === 'courses') courses.push(clean);
+                    else if (currentSection === 'advice') advice += clean + ' ';
+                }
+            });
+
+            // Score
+            document.getElementById('scoreNum').textContent = score;
+            document.getElementById('scoreMsg').textContent =
+                score >= 70 ? '🔥 Job Ready Ho!' :
+                score >= 50 ? '💪 Achha Progress!' :
+                score >= 30 ? '📚 Aur Mehnat Karo!' : '🌱 Abhi Shuruat Hai!';
+
+            // Score color
+            const circle = document.getElementById('scoreCircle');
+            circle.style.background = score >= 70
+                ? 'linear-gradient(135deg, #2ed573, #26d0ce)'
+                : score >= 50
+                ? 'linear-gradient(135deg, #667eea, #764ba2)'
+                : score >= 30
+                ? 'linear-gradient(135deg, #ffc107, #ff6348)'
+                : 'linear-gradient(135deg, #e74c3c, #c0392b)';
+
+            // Lists
+            document.getElementById('strengthsList').innerHTML =
+                strengths.map(s => `<div class="insight-item strength">✓ ${s}</div>`).join('');
+
+            document.getElementById('missingList').innerHTML =
+                missing.map(m => `<div class="insight-item missing">✗ ${m}</div>`).join('');
+
+            document.getElementById('nextStepsList').innerHTML =
+                nextSteps.map((s,i) => `<div class="insight-item">
+                    <strong style="color:#667eea;">${i+1}.</strong> ${s}
+                </div>`).join('');
+
+            document.getElementById('salaryInfo').innerHTML = salary;
+            document.getElementById('timeInfo').textContent = time || 'Analysis se pata chalega';
+            document.getElementById('adviceText').textContent = advice;
+
+            document.getElementById('coursesList').innerHTML =
+                courses.map(c => `<div class="insight-item course">
+                    <i class="fas fa-play-circle me-2" style="color:#ffc107;"></i>${c}
+                </div>`).join('');
+
+            // Show
+            document.getElementById('insightsBox').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

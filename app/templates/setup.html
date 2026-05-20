@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup — PathFlow AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <style>
+        .setup-page {
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a1628 100%);
+            min-height: 100vh;
+            padding: 60px 0;
+        }
+        .setup-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+        }
+        .setup-input {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: white;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+        }
+        .setup-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .setup-input::placeholder { color: rgba(255,255,255,0.3); }
+        .setup-label {
+            color: #a78bfa;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin: 20px 0 8px;
+            display: block;
+        }
+        .range-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .range-label {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            width: 140px;
+            flex-shrink: 0;
+        }
+        input[type="range"] {
+            flex: 1;
+            accent-color: #667eea;
+        }
+        .range-value {
+            color: #a78bfa;
+            font-weight: 700;
+            width: 45px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="setup-page">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-7">
+
+                    <div class="text-center mb-4">
+                        <h2 style="font-weight:800;">
+                            Namaste, {{ user.name }}! 🙏
+                        </h2>
+                        <p style="color:rgba(255,255,255,0.5);">
+                            Apna profile setup karo — dashboard personalize ho jayega!
+                        </p>
+                    </div>
+
+                    <div class="setup-card">
+                        <form method="POST" action="/setup">
+
+                            <label class="setup-label">
+                                <i class="fas fa-briefcase me-2"></i>Tumhara Dream Career?
+                            </label>
+                            <input type="text" name="target_role" class="setup-input"
+                                placeholder="e.g. Data Analyst, Python Developer..."
+                                value="{{ user.target_role or '' }}">
+
+                            <label class="setup-label">
+                                <i class="fas fa-code me-2"></i>Tumhari Current Skills?
+                            </label>
+                            <textarea name="skills" class="setup-input"
+                                style="min-height:80px; resize:vertical;"
+                                placeholder="e.g. HTML, CSS, Python, Excel...">{{ user.skills or '' }}</textarea>
+
+                            <label class="setup-label">
+                                <i class="fas fa-chart-bar me-2"></i>Skill Level Rate Karo (0-100)
+                            </label>
+
+                            <div class="range-row">
+                                <span class="range-label">Python</span>
+                                <input type="range" name="python_level" min="0" max="100"
+                                    value="{{ user.python_level or 0 }}"
+                                    oninput="this.nextElementSibling.textContent=this.value+'%'">
+                                <span class="range-value">{{ user.python_level or 0 }}%</span>
+                            </div>
+
+                            <div class="range-row">
+                                <span class="range-label">Web Development</span>
+                                <input type="range" name="web_level" min="0" max="100"
+                                    value="{{ user.web_level or 0 }}"
+                                    oninput="this.nextElementSibling.textContent=this.value+'%'">
+                                <span class="range-value">{{ user.web_level or 0 }}%</span>
+                            </div>
+
+                            <div class="range-row">
+                                <span class="range-label">Data Analysis</span>
+                                <input type="range" name="data_level" min="0" max="100"
+                                    value="{{ user.data_level or 0 }}"
+                                    oninput="this.nextElementSibling.textContent=this.value+'%'">
+                                <span class="range-value">{{ user.data_level or 0 }}%</span>
+                            </div>
+
+                            <div class="range-row">
+                                <span class="range-label">Machine Learning</span>
+                                <input type="range" name="ml_level" min="0" max="100"
+                                    value="{{ user.ml_level or 0 }}"
+                                    oninput="this.nextElementSibling.textContent=this.value+'%'">
+                                <span class="range-value">{{ user.ml_level or 0 }}%</span>
+                            </div>
+
+                            <div class="range-row">
+                                <span class="range-label">SQL & Database</span>
+                                <input type="range" name="sql_level" min="0" max="100"
+                                    value="{{ user.sql_level or 0 }}"
+                                    oninput="this.nextElementSibling.textContent=this.value+'%'">
+                                <span class="range-value">{{ user.sql_level or 0 }}%</span>
+                            </div>
+
+                            <button type="submit" class="btn-analyze mt-3">
+                                <i class="fas fa-rocket me-2"></i>Save & Go to Dashboard
+                            </button>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

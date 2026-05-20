@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Too Many Requests — PathFlow AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a1628 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .container {
+            text-align: center;
+            padding: 40px 20px;
+            max-width: 500px;
+        }
+        .icon-box {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 32px;
+            font-size: 2.5rem;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(231,76,60,0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(231,76,60,0); }
+        }
+        .error-code {
+            font-size: 5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #e74c3c, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            margin-bottom: 16px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        p {
+            color: rgba(255,255,255,0.6);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+        .timer-box {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 32px;
+        }
+        .timer-box p {
+            margin: 0;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.9rem;
+        }
+        .countdown {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #a78bfa;
+            margin: 8px 0 0;
+        }
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102,126,234,0.4);
+            color: white;
+        }
+        .logo {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="logo">
+        <i class="fas fa-route" style="-webkit-text-fill-color: #667eea;"></i>
+        PathFlow AI
+    </a>
+
+    <div class="container">
+        <div class="icon-box">
+            <i class="fas fa-shield-alt"></i>
+        </div>
+
+        <div class="error-code">429</div>
+        <h1>Thoda Ruko! 🛑</h1>
+        <p>
+            Tumne bahut zyada requests bhej di hain ek minute mein.<br>
+            Security ke liye hume limit lagani padti hai!
+        </p>
+
+        <div class="timer-box">
+            <p>Dobara try karo</p>
+            <div class="countdown" id="countdown">60</div>
+            <p>seconds mein</p>
+        </div>
+
+        <a href="/" class="btn">
+            <i class="fas fa-home me-2"></i>Home Pe Jao
+        </a>
+    </div>
+
+    <script>
+        let seconds = 60;
+        const el = document.getElementById('countdown');
+
+        const timer = setInterval(() => {
+            seconds--;
+            el.textContent = seconds;
+            if (seconds <= 0) {
+                clearInterval(timer);
+                el.textContent = '✓';
+                document.querySelector('.btn').textContent = 'Ab Try Karo!';
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary Insights — PathFlow AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <style>
+        .salary-hero {
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a1628 100%);
+            min-height: 100vh;
+            padding-top: 100px;
+            padding-bottom: 60px;
+        }
+        .salary-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+        }
+        .role-input {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: white;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+        }
+        .role-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: rgba(102,126,234,0.1);
+        }
+        .role-input::placeholder { color: rgba(255,255,255,0.3); }
+        .section-label {
+            color: #a78bfa;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin: 20px 0 8px;
+            display: block;
+        }
+        .suggest-tag {
+            display: inline-block;
+            background: rgba(102,126,234,0.15);
+            border: 1px solid rgba(102,126,234,0.3);
+            color: #a78bfa;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin: 3px;
+            transition: all 0.2s;
+        }
+        .suggest-tag:hover {
+            background: rgba(102,126,234,0.3);
+            transform: translateY(-1px);
+        }
+        .exp-btn {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.7);
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            margin: 4px;
+        }
+        .exp-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-color: transparent;
+            color: white;
+        }
+        .result-box { margin-top: 24px; display: none; }
+        .salary-range-card {
+            background: rgba(46,213,115,0.1);
+            border: 1px solid rgba(46,213,115,0.3);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+        .info-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            height: 100%;
+        }
+        .info-title {
+            color: #a78bfa;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .info-item {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.88rem;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.5;
+        }
+        .info-item:last-child { border-bottom: none; }
+        .global-card {
+            background: rgba(102,126,234,0.1);
+            border: 1px solid rgba(102,126,234,0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .tip-item {
+            background: rgba(255,193,7,0.08);
+            border: 1px solid rgba(255,193,7,0.2);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNavbar">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4" href="/">
+    <img src="{{ url_for('static', filename='images/logo1.png') }}"
+    style="height: 50px; width: 50px; margin-left: auto; vertical-align: middle;">
+    <strong style="font-weight: 1500; margin-right: 8px;">PathFlow.in</strong>
+</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto gap-2">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/resume-scanner">Resume Scanner</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/interview">Interview Prep</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/projects">Projects</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="salary-hero">
+        <div class="container">
+
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <div class="badge-pill mb-3">
+                    <i class="fas fa-rupee-sign me-2"></i>AI Salary Insights
+                </div>
+                <h1 class="hero-title">Salary <span class="gradient-text">Explorer</span></h1>
+                <p class="hero-subtitle mx-auto mt-3">
+                    Apna role batao — AI India aur Global salary real-time analyze karke batayega!
+                </p>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-9">
+                    <div class="salary-card">
+
+                        <!-- Role Input -->
+                        <label class="section-label">
+                            <i class="fas fa-briefcase me-2"></i>Job Role
+                        </label>
+                        <input type="text" class="role-input" id="roleInput"
+                            placeholder="e.g. Data Analyst, Python Developer, AI Engineer...">
+                        <div class="mt-2">
+                            <span class="suggest-tag" onclick="fillRole('Data Analyst')">Data Analyst</span>
+                            <span class="suggest-tag" onclick="fillRole('Python Developer')">Python Developer</span>
+                            <span class="suggest-tag" onclick="fillRole('Web Developer')">Web Developer</span>
+                            <span class="suggest-tag" onclick="fillRole('AI Engineer')">AI Engineer</span>
+                            <span class="suggest-tag" onclick="fillRole('Full Stack Developer')">Full Stack Developer</span>
+                            <span class="suggest-tag" onclick="fillRole('DevOps Engineer')">DevOps Engineer</span>
+                            <span class="suggest-tag" onclick="fillRole('Data Scientist')">Data Scientist</span>
+                            <span class="suggest-tag" onclick="fillRole('Android Developer')">Android Developer</span>
+                        </div>
+
+                        <!-- Experience -->
+                        <label class="section-label">
+                            <i class="fas fa-user-clock me-2"></i>Experience Level
+                        </label>
+                        <div>
+                            <button class="exp-btn active" onclick="setExp(this, 'fresher')">Fresher</button>
+                            <button class="exp-btn" onclick="setExp(this, '1-3 years')">1-3 Years</button>
+                            <button class="exp-btn" onclick="setExp(this, '3-5 years')">3-5 Years</button>
+                            <button class="exp-btn" onclick="setExp(this, '5+ years')">5+ Years</button>
+                        </div>
+
+                        <!-- Generate Button -->
+                        <button class="btn-analyze" id="generateBtn" onclick="getSalary()">
+                            <i class="fas fa-search-dollar me-2"></i>Get Salary Insights
+                        </button>
+
+                        <!-- Results -->
+                        <div class="result-box" id="resultBox">
+
+                            <!-- India Salary -->
+                            <div class="salary-range-card">
+                                <div class="info-title">
+                                    <i class="fas fa-rupee-sign" style="color:#2ed573;"></i>
+                                    Salary in India
+                                </div>
+                                <div id="indiaSalary"
+                                    style="color:rgba(255,255,255,0.85); font-size:0.9rem; line-height:2.2;">
+                                </div>
+                            </div>
+
+                            <div class="row g-3">
+                                <!-- Top Cities -->
+                                <div class="col-md-6">
+                                    <div class="info-card">
+                                        <div class="info-title">
+                                            <i class="fas fa-city" style="color:#667eea;"></i>
+                                            Top Paying Cities
+                                        </div>
+                                        <div id="citiesList"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Top Companies -->
+                                <div class="col-md-6">
+                                    <div class="info-card">
+                                        <div class="info-title">
+                                            <i class="fas fa-building" style="color:#ffc107;"></i>
+                                            Top Companies
+                                        </div>
+                                        <div id="companiesList"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Skills that increase salary -->
+                                <div class="col-12">
+                                    <div class="info-card">
+                                        <div class="info-title">
+                                            <i class="fas fa-arrow-up" style="color:#2ed573;"></i>
+                                            Skills That Increase Salary
+                                        </div>
+                                        <div id="skillsList"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Global Salary -->
+                                <div class="col-12">
+                                    <div class="global-card">
+                                        <div class="info-title">
+                                            <i class="fas fa-globe" style="color:#a78bfa;"></i>
+                                            Global Salary Comparison
+                                        </div>
+                                        <div id="globalSalary"
+                                            style="color:rgba(255,255,255,0.85); font-size:0.9rem; line-height:2.2;">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Tips -->
+                                <div class="col-12">
+                                    <div class="info-card">
+                                        <div class="info-title">
+                                            <i class="fas fa-lightbulb" style="color:#ffc107;"></i>
+                                            Salary Negotiation Tips
+                                        </div>
+                                        <div id="tipsList"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let selectedExp = 'fresher';
+
+        function fillRole(role) {
+            document.getElementById('roleInput').value = role;
+        }
+
+        function setExp(btn, exp) {
+            document.querySelectorAll('.exp-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            selectedExp = exp;
+        }
+
+        async function getSalary() {
+            const role = document.getElementById('roleInput').value.trim();
+            if (!role) {
+                alert('Pehle role likho!');
+                return;
+            }
+
+            const btn = document.getElementById('generateBtn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>AI Analyzing...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/get-salary', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ role, experience: selectedExp })
+                });
+
+                const data = await res.json();
+
+                if (data.salary) {
+                    parseSalary(data.salary);
+                } else {
+                    alert('Error: ' + (data.error || 'Unknown error'));
+                }
+            } catch(e) {
+                alert('Server error: ' + e.message);
+            } finally {
+                btn.innerHTML = '<i class="fas fa-search-dollar me-2"></i>Get Salary Insights';
+                btn.disabled = false;
+            }
+        }
+
+        function parseSalary(raw) {
+            const lines = raw.split('\n');
+            let section = '';
+            let india = '', cities = [], companies = [],
+                skills = [], global = '', tips = [];
+
+            lines.forEach(line => {
+                line = line.trim();
+                if (!line) return;
+                line = line.replace(/\*\*/g, '');
+
+                if (line.includes('SALARY_IN_INDIA') || line.includes('SALARY IN INDIA')) {
+                    section = 'india'; return;
+                }
+                if (line.includes('TOP_PAYING_CITIES') || line.includes('TOP PAYING CITIES')) {
+                    section = 'cities'; return;
+                }
+                if (line.includes('TOP_COMPANIES') || line.includes('TOP COMPANIES')) {
+                    section = 'companies'; return;
+                }
+                if (line.includes('SKILLS_THAT_INCREASE') || line.includes('SKILLS THAT INCREASE')) {
+                    section = 'skills'; return;
+                }
+                if (line.includes('GLOBAL_SALARY') || line.includes('GLOBAL SALARY')) {
+                    section = 'global'; return;
+                }
+                if (line.includes('SALARY_TIPS') || line.includes('SALARY TIPS') || line.includes('NEGOTIATION')) {
+                    section = 'tips'; return;
+                }
+
+                const clean = line.replace(/^[-*•]\s*/, '').trim();
+                if (!clean) return;
+
+                if (section === 'india') india += clean + '<br>';
+                else if (section === 'cities') cities.push(clean);
+                else if (section === 'companies') companies.push(clean);
+                else if (section === 'skills') skills.push(clean);
+                else if (section === 'global') global += clean + '<br>';
+                else if (section === 'tips') tips.push(clean);
+            });
+
+            // Fallback agar koi section empty ho
+            if (!india && raw.length > 50) {
+                india = raw.substring(0, 300) + '...';
+            }
+
+            document.getElementById('indiaSalary').innerHTML = india || 'Data processing...';
+
+            document.getElementById('citiesList').innerHTML = cities.length
+                ? cities.map(c => `<div class="info-item">
+                    <i class="fas fa-map-marker-alt" style="color:#667eea; margin-top:2px;"></i>
+                    <span>${c}</span></div>`).join('')
+                : '<div class="info-item">Data processing...</div>';
+
+            document.getElementById('companiesList').innerHTML = companies.length
+                ? companies.map(c => `<div class="info-item">
+                    <i class="fas fa-building" style="color:#ffc107; margin-top:2px;"></i>
+                    <span>${c}</span></div>`).join('')
+                : '<div class="info-item">Data processing...</div>';
+
+            document.getElementById('skillsList').innerHTML = skills.length
+                ? skills.map(s => `<div class="info-item">
+                    <i class="fas fa-arrow-up" style="color:#2ed573; margin-top:2px;"></i>
+                    <span>${s}</span></div>`).join('')
+                : '<div class="info-item">Data processing...</div>';
+
+            document.getElementById('globalSalary').innerHTML = global || 'Data processing...';
+
+            document.getElementById('tipsList').innerHTML = tips.length
+                ? tips.map(t => `<div class="tip-item">
+                    <i class="fas fa-check me-2" style="color:#ffc107;"></i>${t}
+                    </div>`).join('')
+                : '<div class="tip-item">Data processing...</div>';
+
+            document.getElementById('resultBox').style.display = 'block';
+            document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        window.addEventListener('scroll', () => {
+            document.getElementById('mainNavbar')
+                .classList.toggle('scrolled', window.scrollY > 50);
+        });
+    </script>
+</body>
+</html>
