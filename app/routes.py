@@ -9,23 +9,22 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')
-API_URL = 'https://openrouter.ai/api/v1/chat/completions'
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+API_URL = 'https://api.groq.com/openai/v1/chat/completions'
 
 MODELS = [
-    'google/gemma-4-26b-a4b-it:free',
-    'meta-llama/llama-3.2-3b-instruct:free',
-    'mistralai/mistral-7b-instruct:free',
-    'openai/gpt-oss-120b:free',
-    'openai/gpt-oss-20b:free',
+    'openai/gpt-oss-120b',
+    'llama-3.3-70b-versatile',
+    'llama-3.1-8b-instant',
+    'gemma2-9b-it',
 ]
 
 def ask_ai(prompt):
     headers = {
-        'Authorization': f'Bearer {OPENROUTER_API_KEY}',
-        'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://pathflow-ai.onrender.com',
-        'X-Title': 'PathFlow AI'
+    'Authorization': f'Bearer {GROQ_API_KEY}',
+    'Content-Type': 'application/json',
+    'HTTP-Referer': 'https://pathflow-ai.onrender.com',
+    'X-Title': 'PathFlow AI'
     }
 
     for model in MODELS:
