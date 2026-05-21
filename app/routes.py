@@ -16,6 +16,8 @@ MODELS = [
     'google/gemma-4-26b-a4b-it:free',
     'meta-llama/llama-3.2-3b-instruct:free',
     'mistralai/mistral-7b-instruct:free',
+    'openai/gpt-oss-120b:free',
+    'openai/gpt-oss-20b:free',
 ]
 
 def ask_ai(prompt):
