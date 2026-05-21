@@ -13,21 +13,16 @@ OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')
 API_URL = 'https://openrouter.ai/api/v1/chat/completions'
 
 MODELS = [
-    'google/gemma-4-26b-a4b-it:free',
+    'deepseek/deepseek-v4-flash:free',
     'google/gemma-4-31b-it:free',
-    'openai/gpt-oss-20b:free',
-    'openai/gpt-oss-120b:free',
-    'poolside/laguna-xs.2:free',
-    'poolside/laguna-m.1:free',
-    'meta-llama/llama-3.2-3b-instruct:free',
-    'baidu/cobuddy:free',
+    'openrouter/owl-alpha',
 ]
 
 def ask_ai(prompt):
     headers = {
         'Authorization': f'Bearer {OPENROUTER_API_KEY}',
         'Content-Type': 'application/json',
-        'HTTP-Referer': 'http://localhost:5000',
+        'HTTP-Referer': 'https://pathflow-ai.onrender.com',
         'X-Title': 'PathFlow AI'
     }
 
