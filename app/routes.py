@@ -13,9 +13,9 @@ OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')
 API_URL = 'https://openrouter.ai/api/v1/chat/completions'
 
 MODELS = [
-    'deepseek/deepseek-v4-flash:free',
-    'google/gemma-4-31b-it:free',
-    'openrouter/owl-alpha',
+    'google/gemma-4-26b-a4b-it:free',
+    'meta-llama/llama-3.2-3b-instruct:free',
+    'mistralai/mistral-7b-instruct:free',
 ]
 
 def ask_ai(prompt):
